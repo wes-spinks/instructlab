@@ -24,6 +24,8 @@
    provides its own template), 'tokenizer' (uses the model's tokenizer config), and an external
    file name.
 * Default log format changes to include the logger name in the logs.
+* Add `--save-safetensors` to `ilab model train` command to allow keeping (not unlinking)
+   the generated safetensor files in ./training_results/final/
 
 ### Breaking Changes
 
