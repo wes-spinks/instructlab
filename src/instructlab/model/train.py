@@ -124,6 +124,13 @@ ADDITIONAL_ARGUMENTS = "additional_args"
     ),
 )
 @click.option(
+    "--save-safetensors",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="if true disables unlinking generated *.safetensor files",
+)
+@click.option(
     "--max-seq-len",
     type=int,
     cls=clickext.ConfigOption,
@@ -298,6 +305,7 @@ def train(
     device: str,
     four_bit_quant: bool,
     legacy,
+    save_safetensors,
     **kwargs,
 ):
     """
@@ -497,10 +505,11 @@ def train(
 
         gguf_file_path = convert_llama_to_gguf(model=final_results_dir, pad_vocab=True)
 
-        # Remove safetensors files to save space, were done with them here
-        # and the huggingface lib has them cached
-        for file in final_results_dir.glob("*.safetensors"):
-            file.unlink()
+        if not save_safetensors:
+            # Remove safetensors files to save space, were done with them here
+            # and the huggingface lib has them cached
+            for file in final_results_dir.glob("*.safetensors"):
+                file.unlink()
 
         shutil.move(gguf_file_path, gguf_models_file)
         print(f"Save trained model to {gguf_models_file}")
